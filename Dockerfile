@@ -1,8 +1,6 @@
 FROM openjdk:8-slim
 
-LABEL maintainer="alapshin@fastmail.com"
-
-ARG PACKAGES="git gosu wget unzip"
+ARG PACKAGES="git wget unzip"
 ARG ANDROID_SDK_URL="https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip"
 ARG ANDROID_PACKAGES="tools platform-tools build-tools;27.0.3 platforms;android-27 extras;google;m2repository extras;android;m2repository"
 
