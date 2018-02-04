@@ -12,22 +12,19 @@ RUN apt-get update \
 
 # Set environment variable for Android SDK
 ENV ANDROID_HOME "/opt/android-sdk"
-WORKDIR $ANDROID_HOME
 # Create directory for Android SDK
 # Download and install Android SDK and its components
 RUN mkdir -p ${ANDROID_HOME} \
-     && wget --quiet --output-document=android-tools.zip ${ANDROID_SDK_URL} \
-     && unzip android-tools.zip \
-     && rm -f android-tools.zip \
-     && yes | ${ANDROID_HOME}/tools/bin/sdkmanager --licenses \
-     && ${ANDROID_HOME}/tools/bin/sdkmanager ${ANDROID_PACKAGES} \
-     && chmod -R 777 ${ANDROID_HOME}
+    && cd ${ANDROID_HOME} \
+    && wget --quiet --output-document=android-tools.zip ${ANDROID_SDK_URL} \
+    && unzip android-tools.zip \
+    && rm -f android-tools.zip \
+    && yes | ${ANDROID_HOME}/tools/bin/sdkmanager --licenses \
+    && ${ANDROID_HOME}/tools/bin/sdkmanager ${ANDROID_PACKAGES} \
+    && chmod -R 777 ${ANDROID_HOME}
 
 # Add Android SDK binaries to PATH
 ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDORID_HOME}/platform-tools
 
 # Check that Android SDK is installed
 RUN which android
-
-# Reset working directory
-WORKDIR /
