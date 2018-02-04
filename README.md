@@ -25,6 +25,3 @@ During image build minimal Android SDK is installed in directory `/opt/android-s
 Also during image build licences for other SDK components are accepted. This way
 Android Gradle Plugin could automatically install additional components later.
 To have these components persist between container launches we use named volume.
-
-Also since we don't know ahead of time which user will be used to launch docker
-container we have to make `/opt/android-sdk` directory open to the world using `chmod -R 777`.
