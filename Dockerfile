@@ -12,6 +12,7 @@ RUN apt-get update \
 
 # Set environment variable for Android SDK
 ENV ANDROID_HOME "/opt/android-sdk"
+ENV ANDROID_NKD_HOME "/opt/android-sdk/ndk-bundle"
 # Create directory for Android SDK
 # Download and install Android SDK and its components
 RUN mkdir -p ${ANDROID_HOME} \
