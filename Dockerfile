@@ -20,7 +20,7 @@ RUN mkdir -p ${ANDROID_HOME} \
     && unzip android-tools.zip \
     && rm -f android-tools.zip \
     && yes | ${ANDROID_HOME}/tools/bin/sdkmanager --licenses \
-    && ${ANDROID_HOME}/tools/bin/sdkmanager ${ANDROID_PACKAGES}
+    && ${ANDROID_HOME}/tools/bin/sdkmanager --verbose ${ANDROID_PACKAGES}
 
 # Add Android SDK binaries to PATH
 ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDORID_HOME}/platform-tools
