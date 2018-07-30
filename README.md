@@ -15,7 +15,7 @@ Change directory to your project directory and then run:
 
 ```bash
 docker run --interactive --tty --rm \
-    --volume=$PWD:$PWD --workspace=$PWD \
+    --volume=$PWD:$PWD --workdir=$PWD \
     --volume=android-sdk:/opt/android-sdk \
     username/android-build-env /bin/sh -c "./gradlew build"
 ```
