@@ -1,30 +1,38 @@
-FROM openjdk:8-slim
+FROM openjdk:11
 
-ARG PACKAGES="git make wget unzip"
-ARG ANDROID_SDK_URL="https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip"
-ARG ANDROID_PACKAGES="tools platform-tools build-tools;28.0.1 platforms;android-27 extras;google;m2repository extras;android;m2repository ndk-bundle"
+ARG PACKAGES="file git make wget unzip libtinfo5"
+ARG ANDROID_SDK_URL="https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip"
+ARG ANDROID_PACKAGES="tools platform-tools build-tools;28.0.3 platforms;android-28 extras;google;m2repository extras;android;m2repository"
+
+# Set environment variables for Android SDK
+ENV ANDROID_HOME /opt/android-sdk
+ENV ANDROID_NDK_HOME ${ANDROID_HOME}/ndk-bundle
 
 # Install required packages
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends --no-install-suggests ${PACKAGES} \
     && apt-get clean \
-    && rm -fr /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
-# Set environment variable for Android SDK
-ENV ANDROID_HOME "/opt/android-sdk"
-ENV ANDROID_NKD_HOME "/opt/android-sdk/ndk-bundle"
+# Download JAXB libraries used by sdkmanager because they are not available out of the box in JDK 11
+ENV SDKMANAGER_LIB_PATH ${ANDROID_HOME}/tools/lib
+RUN mkdir -p ${SDKMANAGER_LIB_PATH} \ 
+    && wget --quiet --directory-prefix=${SDKMANAGER_LIB_PATH} \ 
+    https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api/2.3.1/jaxb-api-2.3.1.jar \
+    https://repo1.maven.org/maven2/com/sun/xml/bind/jaxb-jxc/2.3.2/jaxb-jxc-2.3.2.jar \
+    https://repo1.maven.org/maven2/com/sun/xml/bind/jaxb-impl/2.3.2/jaxb-impl-2.3.2.jar \
+    https://repo1.maven.org/maven2/com/sun/xml/bind/jaxb-core/2.3.0.1/jaxb-core-2.3.0.1.jar \
+    https://repo1.maven.org/maven2/javax/activation/activation/1.1.1/activation-1.1.1.jar
+
 # Create directory for Android SDK
 # Download and install Android SDK and its components
 RUN mkdir -p ${ANDROID_HOME} \
-    && cd ${ANDROID_HOME} \
-    && wget --quiet --output-document=android-tools.zip ${ANDROID_SDK_URL} \
-    && unzip android-tools.zip \
-    && rm -f android-tools.zip \
+    && wget --quiet --output-document=${ANDROID_HOME}/sdk-tools.zip ${ANDROID_SDK_URL} \
+    && unzip -d ${ANDROID_HOME} ${ANDROID_HOME}/sdk-tools.zip \
+    && rm --force ${ANDROID_HOME}/sdk-tools.zip \
+    # Patch sdkmanager script to add JAXB libraries to classpath
+    && sed -i 's|CLASSPATH=.*|&:${APP_HOME}/lib/jaxb-impl-2.3.2.jar:${APP_HOME}/lib/jaxb-api-2.3.1.jar:${APP_HOME}/lib/jaxb-jxc-2.3.2.jar:${APP_HOME}/lib/jaxb-core-2.3.0.1.jar:${APP_HOME}/lib/activation-1.1.1.jar|' ${ANDROID_HOME}/tools/bin/sdkmanager \
+    # Accept all licenses
     && yes | ${ANDROID_HOME}/tools/bin/sdkmanager --licenses \
+    # Install specified packages
     && ${ANDROID_HOME}/tools/bin/sdkmanager --verbose ${ANDROID_PACKAGES}
-
-# Add Android SDK binaries to PATH
-ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDORID_HOME}/platform-tools
-
-# Check that Android SDK is installed
-RUN which android
