@@ -20,8 +20,9 @@ docker run --interactive --tty --rm \
     username/android-build-env /bin/sh -c "./gradlew build"
 ```
 
-## Usage of volumes to store Android SDK
-During image build minimal Android SDK is installed in directory `/opt/android-sdk`.
-Also during image build licences for other SDK components are accepted. This way
-Android Gradle Plugin could automatically install additional components later.
-To have these components persist between container launches we use named volume.
+## Use volume to allow installation of missing Android SDK components
+During image build minimal Android SDK is installed in directory
+`/opt/android-sdk`. Also during image build licences for other SDK components
+are accepted. This way Android Gradle Plugin could automatically install
+additional components later. To have these components persist between container
+launches  `/opt/android-sdk` could be mounted using volume.
