@@ -32,8 +32,12 @@ RUN mkdir -p ${ANDROID_SDK_ROOT} \
     && unzip -d ${ANDROID_SDK_ROOT} ${ANDROID_SDK_ROOT}/sdk-tools.zip \
     && rm --force ${ANDROID_SDK_ROOT}/sdk-tools.zip \
     # Patch sdkmanager script to add JAXB libraries to classpath
-    && sed -i 's|CLASSPATH=.*|&:${APP_HOME}/lib/jaxb-impl-2.3.2.jar:${APP_HOME}/lib/jaxb-api-2.3.1.jar:${APP_HOME}/lib/jaxb-jxc-2.3.2.jar:${APP_HOME}/lib/jaxb-core-2.3.0.1.jar:${APP_HOME}/lib/activation-1.1.1.jar|' ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager \
+    && sed --in-place 's|CLASSPATH=.*|&:${APP_HOME}/lib/jaxb-impl-2.3.2.jar:${APP_HOME}/lib/jaxb-api-2.3.1.jar:${APP_HOME}/lib/jaxb-jxc-2.3.2.jar:${APP_HOME}/lib/jaxb-core-2.3.0.1.jar:${APP_HOME}/lib/activation-1.1.1.jar|' ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager \
     # Accept all licenses
     && yes | ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --licenses \
-    # Install specified packages
-    && ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --verbose ${ANDROID_PACKAGES}
+    # Install sdk packages
+    && ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --verbose ${ANDROID_PACKAGES} \
+    # Make directory with sdk writeable for other users
+    # This way missing sdk packages could be installed by android gradle plugin
+    # during build
+    && chmod --recursive 777 ${ANDROID_SDK_ROOT}
