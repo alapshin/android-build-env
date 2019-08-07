@@ -4,6 +4,7 @@ ARG PACKAGES="file git make wget unzip libtinfo5"
 ARG ANDROID_SDK_URL="https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip"
 ARG ANDROID_PACKAGES="tools platform-tools build-tools;28.0.3 platforms;android-28 extras;google;m2repository extras;android;m2repository"
 
+ENV BUILD_HOME /var/cache/build
 # Set environment variables for Android SDK
 ENV ANDROID_SDK_ROOT /opt/android-sdk
 ENV ANDROID_SDK_HOME /opt/android-sdk
@@ -14,6 +15,10 @@ RUN apt-get update \
     && apt-get install --yes --no-install-recommends --no-install-suggests ${PACKAGES} \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Create directory that is used as user home during build
+RUN mkdir -p ${BUILD_HOME} \
+        && chmod --recursive 777 ${BUILD_HOME}
 
 # Download JAXB libraries used by sdkmanager because they are not available out of the box in JDK 11
 ENV SDKMANAGER_LIB_PATH ${ANDROID_SDK_ROOT}/tools/lib
