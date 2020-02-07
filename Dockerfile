@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:8u242-jdk-buster
 
 ARG PACKAGES="file git make wget unzip libtinfo5"
 ARG ANDROID_SDK_URL="https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip"
