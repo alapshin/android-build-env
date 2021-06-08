@@ -1,4 +1,4 @@
-FROM openjdk:8u242-jdk-buster
+FROM openjdk:11.0.11-9-jdk-buster
 
 ARG PACKAGES="file git make wget unzip libtinfo5"
 ARG ANDROID_SDK_URL="https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip"
@@ -17,8 +17,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Create directory that is used as user home during build
-RUN mkdir -p ${BUILD_HOME} \
-        && chmod --recursive 777 ${BUILD_HOME}
+RUN mkdir -p ${BUILD_HOME} && chmod --recursive 777 ${BUILD_HOME}
 
 # Create directory for Android SDK
 # Download and install Android SDK and its components
