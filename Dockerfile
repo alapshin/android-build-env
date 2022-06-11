@@ -1,4 +1,4 @@
-FROM openjdk:11.0.11-9-jdk-buster
+FROM openjdk:11.0.15-jdk-bullseye
 
 ARG PACKAGES="file git make curl libarchive-tools"
 ARG ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip"
